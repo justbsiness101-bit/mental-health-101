@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Health 101 — The operating system for behavioral health</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Albert+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182826;
+    --pine:#24443C;
+    --euca:#4E7A6A;
+    --euca-soft:#DCE8E2;
+    --mist:#ECF1EE;
+    --card:#FFFFFF;
+    --marigold:#E0A52E;
+    --marigold-soft:#F7ECD2;
+    --clay:#B85C38;
+    --line:#C9D6CF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Albert Sans',sans-serif;
+    background:var(--mist);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .display{font-family:'Young Serif',serif;font-weight:400}
+
+  /* ---------- shell ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(236,241,238,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    max-width:1100px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;gap:28px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Young Serif',serif;font-size:1.1rem;white-space:nowrap}
+  .logo-mark{
+    width:30px;height:30px;border-radius:50% 50% 50% 4px;
+    background:var(--pine);position:relative;flex-shrink:0;
+  }
+  .logo-mark::after{
+    content:'';position:absolute;inset:7px;border-radius:50% 50% 50% 3px;
+    background:var(--marigold);
+  }
+  .tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+  .crisis-btn{
+    border:none;cursor:pointer;font-family:'Albert Sans',sans-serif;font-weight:700;
+    font-size:.82rem;padding:8px 16px;border-radius:999px;
+    background:var(--clay);color:#fff;white-space:nowrap;
+  }
+  .crisis-btn:hover{filter:brightness(1.08)}
+  /* ---------- check-in wizard ---------- */
+  .wizard{max-width:620px;margin:0 auto}
+  .wizard-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px;box-shadow:0 8px 30px rgba(24,40,38,.06);
+  }
+  .wizard-q{font-family:'Young Serif',serif;font-size:1.25rem;margin-bottom:18px}
+  .wizard-opts{display:grid;gap:10px}
+  .wizard-opt{
+    text-align:left;border:1.5px solid var(--line);background:var(--mist);
+    border-radius:12px;padding:14px 16px;cursor:pointer;
+    font-family:'Albert Sans',sans-serif;font-size:.95rem;color:var(--ink);
+    transition:border-color .12s, background .12s;
+  }
+  .wizard-opt:hover{border-color:var(--euca);background:var(--euca-soft)}
+  .wizard-progress{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--euca);
+    margin-bottom:14px;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .wizard-result h3{font-family:'Young Serif',serif;font-weight:400;font-size:1.3rem;margin-bottom:10px}
+  .wizard-result p{font-size:.93rem;color:#3c4f4a;margin-bottom:14px}
+  .match-chip{
+    display:inline-block;background:var(--euca-soft);color:var(--pine);
+    font-weight:600;border-radius:999px;padding:8px 18px;margin-bottom:16px;
+  }
+  .wizard-note{
+    background:var(--marigold-soft);color:#7a5a14;border-radius:10px;
+    padding:12px 15px;font-size:.82rem;
+  }
+  .tab{
+    border:none;background:none;cursor:pointer;
+    font-family:'Albert Sans',sans-serif;font-size:.92rem;font-weight:500;
+    color:var(--pine);padding:8px 14px;border-radius:999px;
+    transition:background .15s;
+  }
+  .tab:hover{background:var(--euca-soft)}
+  .tab.active{background:var(--pine);color:#fff}
+  .tab:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+
+  main{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+  .view{display:none;animation:fade .25s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 48px;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--euca);margin-bottom:14px;
+  }
+  h1{font-family:'Young Serif',serif;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.12;font-weight:400}
+  h1 em{font-style:normal;color:var(--euca)}
+  .hero p{margin-top:18px;font-size:1.08rem;color:#3c4f4a;max-width:46ch}
+  .hero-actions{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{
+    border:none;cursor:pointer;font-family:'Albert Sans',sans-serif;
+    font-weight:600;font-size:.95rem;padding:13px 22px;border-radius:999px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--pine);color:#fff}
+  .btn-ghost{background:transparent;color:var(--pine);border:1.5px solid var(--pine)}
+  .btn-gold{background:var(--marigold);color:var(--ink)}
+
+  .supply-gauge{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;box-shadow:0 8px 30px rgba(24,40,38,.06);
+  }
+  .supply-gauge h3{font-size:.85rem;font-weight:600;color:var(--pine);margin-bottom:18px}
+  .gauge-row{margin-bottom:16px}
+  .gauge-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px}
+  .gauge-label .mono{color:var(--euca)}
+  .gauge-track{height:10px;border-radius:99px;background:var(--euca-soft);overflow:hidden}
+  .gauge-fill{height:100%;border-radius:99px;background:var(--euca);width:0;transition:width 1.2s ease}
+  .gauge-fill.gold{background:var(--marigold)}
+  .gauge-note{font-size:.75rem;color:#5a6e68;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+
+  /* ---------- section scaffolding ---------- */
+  section{padding:42px 0}
+  h2{font-family:'Young Serif',serif;font-size:1.7rem;font-weight:400;margin-bottom:8px}
+  .section-sub{color:#4b5f59;max-width:62ch;margin-bottom:30px}
+
+  /* ---------- problem map (signature) ---------- */
+  .problem-map{display:grid;grid-template-columns:1fr;gap:10px}
+  .problem-row{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .problem-head{
+    width:100%;display:flex;align-items:center;gap:16px;
+    padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;
+    font-family:'Albert Sans',sans-serif;font-size:1rem;color:var(--ink);
+  }
+  .problem-head:hover{background:var(--euca-soft)}
+  .problem-num{
+    font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--euca);
+    width:26px;flex-shrink:0;
+  }
+  .problem-title{font-weight:600;flex:1}
+  .problem-agent-chip{
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;
+    background:var(--marigold-soft);color:#7a5a14;
+    padding:4px 10px;border-radius:999px;white-space:nowrap;
+  }
+  .chev{transition:transform .2s;color:var(--euca);flex-shrink:0}
+  .problem-row.open .chev{transform:rotate(90deg)}
+  .problem-body{
+    display:none;padding:0 20px 20px 62px;color:#3c4f4a;font-size:.93rem;
+  }
+  .problem-row.open .problem-body{display:block}
+  .problem-body strong{color:var(--pine)}
+
+  /* ---------- agents ---------- */
+  .agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+  .agent-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;display:flex;flex-direction:column;gap:10px;
+  }
+  .agent-top{display:flex;align-items:center;gap:12px}
+  .agent-icon{
+    width:40px;height:40px;border-radius:12px;background:var(--euca-soft);
+    display:grid;place-items:center;font-size:1.15rem;flex-shrink:0;
+  }
+  .agent-card h3{font-size:1.02rem}
+  .agent-card .role{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--euca);text-transform:uppercase;letter-spacing:.08em}
+  .agent-card p{font-size:.9rem;color:#3c4f4a}
+  .agent-guard{
+    margin-top:auto;font-size:.78rem;color:#7a5a14;background:var(--marigold-soft);
+    border-radius:8px;padding:8px 11px;
+  }
+  .principles{
+    margin-top:28px;background:var(--pine);color:#E7EFEA;border-radius:var(--radius);
+    padding:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;
+  }
+  .principles h3{font-family:'Young Serif',serif;font-weight:400;font-size:1.05rem;color:#fff;margin-bottom:6px}
+  .principles p{font-size:.85rem;color:#C4D6CD}
+
+  /* ---------- dashboard ---------- */
+  .dash{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .metric{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  }
+  .metric .k{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#5a6e68;text-transform:uppercase;letter-spacing:.06em}
+  .metric .v{font-family:'Young Serif',serif;font-size:1.9rem;margin-top:6px}
+  .metric .d{font-size:.75rem;margin-top:4px}
+  .up{color:#2C7A4B}.down{color:var(--clay)}
+  .dash-wide{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .panel h3{font-size:.95rem;margin-bottom:14px}
+  .feed-item{display:flex;gap:12px;padding:10px 0;border-top:1px dashed var(--line);font-size:.85rem}
+  .feed-item:first-of-type{border-top:none}
+  .feed-time{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:#5a6e68;width:52px;flex-shrink:0;padding-top:2px}
+  .feed-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:.65rem;padding:2px 8px;border-radius:999px;
+    background:var(--euca-soft);color:var(--pine);height:fit-content;white-space:nowrap;
+  }
+  .feed-tag.alert{background:#F3DED3;color:var(--clay)}
+  .bars{display:flex;align-items:flex-end;gap:7px;height:130px;margin-top:8px}
+  .bar{flex:1;background:var(--euca-soft);border-radius:6px 6px 0 0;position:relative;min-width:14px}
+  .bar i{
+    position:absolute;bottom:0;left:0;right:0;border-radius:6px 6px 0 0;
+    background:var(--euca);font-style:normal;
+  }
+  .bar span{
+    position:absolute;bottom:-20px;left:0;right:0;text-align:center;
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:#5a6e68;
+  }
+  .demo-note{font-size:.78rem;color:#5a6e68;margin-top:34px}
+
+  /* ---------- pricing ---------- */
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .price-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;display:flex;flex-direction:column;
+  }
+  .price-card.featured{border:2px solid var(--pine);position:relative}
+  .badge{
+    position:absolute;top:-12px;left:24px;background:var(--marigold);
+    font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:999px;
+  }
+  .price-card h3{font-size:1.05rem}
+  .price-card .who{font-size:.8rem;color:#5a6e68;margin-top:2px}
+  .price{font-family:'Young Serif',serif;font-size:2.1rem;margin:16px 0 2px}
+  .price small{font-family:'Albert Sans',sans-serif;font-size:.85rem;color:#5a6e68}
+  .price-card ul{list-style:none;margin:16px 0 22px;flex:1}
+  .price-card li{font-size:.86rem;padding:6px 0 6px 22px;position:relative;color:#3c4f4a}
+  .price-card li::before{content:'✓';position:absolute;left:0;color:var(--euca);font-weight:700}
+  .equity-note{
+    margin-top:22px;background:var(--euca-soft);border-radius:var(--radius);
+    padding:20px 24px;font-size:.9rem;color:var(--pine);
+  }
+
+  /* ---------- paywall modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(24,40,38,.45);z-index:100;
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-backdrop.show{display:flex}
+  .modal{
+    background:var(--card);border-radius:18px;max-width:440px;width:100%;
+    padding:30px;box-shadow:0 24px 60px rgba(24,40,38,.25);
+  }
+  .modal h3{font-family:'Young Serif',serif;font-weight:400;font-size:1.3rem}
+  .modal .plan-line{font-size:.9rem;color:#5a6e68;margin:6px 0 20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.78rem;font-weight:600;margin-bottom:5px;color:var(--pine)}
+  .field input{
+    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:.85rem;background:var(--mist);color:#5a6e68;
+  }
+  .field input:disabled{cursor:not-allowed}
+  .demo-banner{
+    background:var(--marigold-soft);color:#7a5a14;font-size:.8rem;
+    border-radius:10px;padding:11px 14px;margin-bottom:18px;
+  }
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+
+  footer{
+    border-top:1px solid var(--line);padding:28px 24px;max-width:1100px;margin:0 auto;
+    font-size:.8rem;color:#5a6e68;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;padding-top:44px}
+    .dash{grid-template-columns:repeat(2,1fr)}
+    .dash-wide{grid-template-columns:1fr}
+    .problem-body{padding-left:20px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><div class="logo-mark" aria-hidden="true"></div>Mental Health 101</div>
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab active" data-view="overview">Overview</button>
+      <button class="tab" data-view="checkin">Check in</button>
+      <button class="tab" data-view="agents">AI agents</button>
+      <button class="tab" data-view="dashboard">Live dashboard</button>
+      <button class="tab" data-view="pricing">Pricing</button>
+    </nav>
+    <button class="crisis-btn" onclick="openCrisis()">Get help now</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ OVERVIEW ============ -->
+<div class="view active" id="view-overview">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Behavioral health operations platform</div>
+      <h1>Care for more people with the clinicians <em>we already have.</em></h1>
+      <p>Roughly 70% of people with a mental health condition receive no formal care — not because demand is missing, but because clinician time is drowned in paperwork, billing, no-shows, and mismatched referrals. Mental Health 101 puts AI agents around the clinician, never in place of one, so every hour of human care goes further.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="goView('pricing')">See pricing</button>
+        <button class="btn btn-ghost" onclick="goView('agents')">Meet the agents</button>
+      </div>
+    </div>
+    <div class="supply-gauge">
+      <h3>Where clinician hours go today</h3>
+      <div class="gauge-row">
+        <div class="gauge-label"><span>Direct patient care</span><span class="mono">~55%</span></div>
+        <div class="gauge-track"><div class="gauge-fill" data-w="55%"></div></div>
+      </div>
+      <div class="gauge-row">
+        <div class="gauge-label"><span>Documentation &amp; notes</span><span class="mono">~25%</span></div>
+        <div class="gauge-track"><div class="gauge-fill gold" data-w="25%"></div></div>
+      </div>
+      <div class="gauge-row">
+        <div class="gauge-label"><span>Billing, claims, admin</span><span class="mono">~20%</span></div>
+        <div class="gauge-track"><div class="gauge-fill gold" data-w="20%"></div></div>
+      </div>
+      <p class="gauge-note">Mental Health 101's target: return the gold share to care. Recovering even half of admin time adds the equivalent of ~1 clinical day per clinician per week.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>Ten industry problems, one connected system</h2>
+    <p class="section-sub">Each module below maps to a structural problem in the behavioral health market. Open a row to see how Mental Health 101 addresses it and which agent does the work.</p>
+    <div class="problem-map" id="problemMap"></div>
+  </section>
+</div>
+
+<!-- ============ AGENTS ============ -->
+<div class="view" id="view-agents">
+  <section>
+    <h2>The agent roster</h2>
+    <p class="section-sub">Seven specialized AI agents run the operational layer of a practice. None of them deliver therapy. All of them report to humans.</p>
+    <div class="agent-grid" id="agentGrid"></div>
+
+    <div class="principles">
+      <div>
+        <h3>Humans deliver care</h3>
+        <p>Agents handle intake logistics, paperwork, and follow-up. Diagnosis, treatment, and therapeutic conversation belong to licensed clinicians, always.</p>
+      </div>
+      <div>
+        <h3>Crisis goes to people, instantly</h3>
+        <p>Any signal of crisis — in intake forms, messages, or check-ins — bypasses every queue and routes to an on-call human with full context. The agent's only job is speed.</p>
+      </div>
+      <div>
+        <h3>Privacy is the product</h3>
+        <p>Mental health data never trains models, never feeds advertising, and never leaves the care relationship. Every agent action is logged and auditable by the patient.</p>
+      </div>
+      <div>
+        <h3>Evidence over engagement</h3>
+        <p>Success is measured in validated outcomes (PHQ-9, GAD-7) and access metrics — not minutes in app. We don't optimize for screen time on a mental health product.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="view" id="view-dashboard">
+  <section>
+    <h2>Practice dashboard</h2>
+    <p class="section-sub">A sample view for a 12-clinician group practice, with agents working in the background. (Demo data.)</p>
+
+    <div class="dash">
+      <div class="metric"><div class="k">Median wait to first visit</div><div class="v">4.2 days</div><div class="d up">▼ from 19 days</div></div>
+      <div class="metric"><div class="k">Clinician hours on admin</div><div class="v">6.1 hrs/wk</div><div class="d up">▼ from 13.4 hrs/wk</div></div>
+      <div class="metric"><div class="k">Clean-claim rate</div><div class="v">96%</div><div class="d up">▲ from 81%</div></div>
+      <div class="metric"><div class="k">90-day patient retention</div><div class="v">71%</div><div class="d up">▲ from 44%</div></div>
+    </div>
+
+    <div class="dash-wide">
+      <div class="panel">
+        <h3>Agent activity — today</h3>
+        <div id="feed"></div>
+      </div>
+      <div class="panel">
+        <h3>Avg PHQ-9 by treatment week (caseload)</h3>
+        <div class="bars" id="bars" role="img" aria-label="Bar chart of average PHQ-9 scores declining from 16.2 at intake to 7.1 at week 12"></div>
+      </div>
+    </div>
+    <p class="demo-note">All figures on this page are illustrative demo data for product design purposes, not claims about real clinical outcomes.</p>
+  </section>
+</div>
+
+<!-- ============ CHECK-IN (demo intake) ============ -->
+<div class="view" id="view-checkin">
+  <section>
+    <h2>Check in</h2>
+    <p class="section-sub">A demo of the front door — the 90-second check-in that replaces phone tag and intimidating intake forms. (Interactive demo only: nothing is stored, and no real triage happens here.)</p>
+    <div class="wizard">
+      <div class="wizard-card" id="wizardCard"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PRICING ============ -->
+<div class="view" id="view-pricing">
+  <section>
+    <h2>Pricing</h2>
+    <p class="section-sub">Mental Health 101 charges the supply side — clinicians, practices, and health systems whose economics it improves. Patients never pay to be triaged, remembered, or kept safe.</p>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>Solo</h3>
+        <div class="who">Independent clinicians</div>
+        <div class="price">$49<small>/clinician/mo</small></div>
+        <ul>
+          <li>Scribe agent — notes drafted from sessions</li>
+          <li>Claims agent — billing &amp; denial appeals</li>
+          <li>Continuity agent — reminders &amp; check-ins</li>
+          <li>Outcome tracking (PHQ-9 / GAD-7)</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="openPaywall('Solo','$49/mo')">Start 30-day free trial</button>
+      </div>
+
+      <div class="price-card featured">
+        <div class="badge">Most practices</div>
+        <h3>Practice</h3>
+        <div class="who">Group practices, 2–50 clinicians</div>
+        <div class="price">$39<small>/clinician/mo</small></div>
+        <ul>
+          <li>Everything in Solo</li>
+          <li>Triage agent — intake, matching &amp; crisis routing</li>
+          <li>Capacity agent — scheduling &amp; no-show recovery</li>
+          <li>Practice dashboard &amp; payer analytics</li>
+          <li>Workforce agent — burnout early-warning</li>
+        </ul>
+        <button class="btn btn-primary" onclick="openPaywall('Practice','$39/clinician/mo')">Start 30-day free trial</button>
+      </div>
+
+      <div class="price-card">
+        <h3>System</h3>
+        <div class="who">Hospitals, payers, employers, public health</div>
+        <div class="price">Custom</div>
+        <ul>
+          <li>Everything in Practice</li>
+          <li>Population access analytics</li>
+          <li>EHR &amp; payer integrations</li>
+          <li>Multi-site governance &amp; audit</li>
+          <li>Dedicated clinical safety review</li>
+        </ul>
+        <button class="btn btn-gold" onclick="openPaywall('System','custom pricing')">Talk to us</button>
+      </div>
+    </div>
+
+    <div class="equity-note">
+      <strong>Access pledge:</strong> for every paid clinician seat, Mental Health 101 funds one seat free for a clinician working in a designated shortage area or low-resource public clinic — because the biggest market failure in mental health is the people the market never reaches.
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer>
+  <div>Mental Health 101 — product concept demo. Not a medical device and not a substitute for professional care.</div>
+  <div>If you or someone you know is in crisis, contact your local emergency services or a crisis helpline.</div>
+</footer>
+
+<!-- ============ PAYWALL MODAL ============ -->
+<!-- ============ CRISIS MODAL ============ -->
+<div class="modal-backdrop" id="crisis" role="dialog" aria-modal="true" aria-labelledby="crisisTitle">
+  <div class="modal">
+    <h3 id="crisisTitle">If you need help right now</h3>
+    <div class="plan-line">You don't have to wait for an app launch — support exists today.</div>
+    <p style="font-size:.92rem;color:#3c4f4a;margin-bottom:12px">
+      If you are in immediate danger, contact your <strong>local emergency services</strong> now.
+    </p>
+    <p style="font-size:.92rem;color:#3c4f4a;margin-bottom:12px">
+      For someone to talk to, a directory of verified crisis lines by country is at
+      <a href="https://findahelpline.com" target="_blank" rel="noopener" style="color:var(--pine);font-weight:600">findahelpline.com</a>.
+    </p>
+    <p style="font-size:.92rem;color:#3c4f4a;margin-bottom:18px">
+      Reaching out is a strong move, not a weak one.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeCrisis()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="paywall" role="dialog" aria-modal="true" aria-labelledby="paywallTitle">
+  <div class="modal">
+    <h3 id="paywallTitle">Start your trial</h3>
+    <div class="plan-line" id="planLine"></div>
+    <div class="demo-banner">This is a demo checkout. No payment is collected and no card details should be entered here. In production, this form would hand off to a payment provider such as Stripe — the app itself never sees or stores card numbers.</div>
+    <div class="field">
+      <label for="cc-name">Name on card</label>
+      <input id="cc-name" type="text" placeholder="Demo only" disabled>
+    </div>
+    <div class="field">
+      <label for="cc-num">Card number</label>
+      <input id="cc-num" type="text" placeholder="•••• •••• •••• ••••  (disabled in demo)" disabled>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closePaywall()">Close</button>
+      <button class="btn btn-primary" onclick="fakeSubscribe()">Simulate subscribe</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const problems = [
+  {t:"Workforce shortage", a:"Scribe + Capacity", b:"There aren't enough clinicians, so the only honest lever is making each clinician hour count. <strong>The Scribe agent</strong> drafts session notes and treatment-plan updates for clinician review, and <strong>the Capacity agent</strong> fills cancellations from a smart waitlist — together recovering hours that go straight back into care."},
+  {t:"The unreached 70%", a:"Triage + Access pledge", b:"<strong>The Triage agent</strong> runs structured, multilingual intake on any device — including low-bandwidth SMS flows for regions with limited connectivity — and matches people to stepped care: self-guided tools, peer support, group care, or a clinician. The 1-for-1 access pledge funds seats in shortage areas."},
+  {t:"Reimbursement chaos", a:"Claims agent", b:"<strong>The Claims agent</strong> verifies coverage before the first visit, codes sessions correctly, submits clean claims, and auto-drafts denial appeals with documentation attached. Practices stop subsidizing payer complexity with unpaid clinician evenings."},
+  {t:"Brutal app retention", a:"Continuity agent", b:"Most apps lose 97% of users in a month because nothing personal pulls people back. <strong>The Continuity agent</strong> sends clinician-approved check-ins between sessions, notices when someone goes quiet, and flags disengagement to the care team — retention through relationship, not gamification."},
+  {t:"Low utilization of employer benefits", a:"Triage agent", b:"Employees don't use benefits they have to hunt for. Mental Health 101 embeds <strong>Triage</strong> where people already are (Slack, SMS, the intranet), keeps usage invisible to the employer at the individual level, and reports only aggregate, privacy-safe utilization."},
+  {t:"Clinical evidence deficits", a:"Evidence agent", b:"<strong>The Evidence agent</strong> administers validated measures (PHQ-9, GAD-7, ORS) at the right cadence, charts trajectories per patient and per program, and produces audit-ready outcome reports — so claims about effectiveness rest on measurement, not marketing."},
+  {t:"Privacy and trust failures", a:"Privacy guard", b:"<strong>The Privacy guard</strong> is a policy layer every other agent must pass through: no data sold, no ad pixels, no model training on patient content, and a patient-visible log of every automated action taken on their record."},
+  {t:"Fragmentation, no moats", a:"The platform itself", b:"Care is local and relationship-based — Mental Health 101 doesn't fight that, it federates it. Independent practices keep their identity while sharing one operational backbone, referral network, and payer infrastructure. The moat is the network of practices, not a brand."},
+  {t:"Margin squeeze on providers", a:"Capacity + Workforce", b:"<strong>Capacity</strong> lifts utilization by recovering no-shows and balancing caseloads; <strong>the Workforce agent</strong> watches schedule density, after-hours documentation, and PTO patterns to flag burnout risk early — protecting margins by protecting the people who generate them."},
+  {t:"AI disruption pressure", a:"All seven, governed", b:"Unsupervised AI 'therapy' is a safety and liability problem. Mental Health 101's position: adopt AI aggressively for operations, never for autonomous treatment. Crisis signals route to humans within minutes, with the agent's full context attached."}
+];
+
+const agents = [
+  {i:"🧭", n:"Triage agent", r:"Intake & matching", p:"Runs structured intake in 40+ languages, screens with validated tools, and matches each person to the right level of care. Detects crisis language and escalates to an on-call human immediately.", g:"Never diagnoses. Crisis = human, always."},
+  {i:"✍️", n:"Scribe agent", r:"Documentation", p:"Listens (with explicit patient consent) and drafts progress notes, treatment plans, and referral letters in the clinician's own format. Clinician reviews and signs everything.", g:"Drafts only — a human signs every note."},
+  {i:"🧾", n:"Claims agent", r:"Billing & payers", p:"Checks eligibility, codes sessions, files clean claims, tracks payer behavior, and writes denial appeals with supporting documentation attached.", g:"Flags anything ambiguous for human billing review."},
+  {i:"🌱", n:"Continuity agent", r:"Between-session care", p:"Sends clinician-approved check-ins, homework reminders, and mood prompts. Notices silence and disengagement patterns and tells the care team before a patient disappears.", g:"Messages are templated & clinician-approved."},
+  {i:"📅", n:"Capacity agent", r:"Scheduling", p:"Predicts no-shows, backfills openings from the waitlist within minutes, and balances caseloads across the practice so new patients aren't quoted six-week waits.", g:"Patients can always reach a human scheduler."},
+  {i:"📊", n:"Evidence agent", r:"Outcomes", p:"Administers PHQ-9 / GAD-7 / ORS on schedule, charts every patient's trajectory, and rolls results into program-level evidence reports for payers and regulators.", g:"Scores inform clinicians; they never auto-trigger treatment changes."},
+  {i:"🛡️", n:"Workforce agent", r:"Clinician wellbeing", p:"Monitors schedule density, after-hours charting, and leave patterns to surface burnout risk to practice leads — anonymized at the individual level unless the clinician opts in.", g:"Reports patterns, never surveils people."}
+];
+
+const feed = [
+  {t:"09:02", tag:"Triage", x:"New intake (SMS, Swahili) matched to group CBT — wait quoted: 3 days"},
+  {t:"09:14", tag:"Capacity", x:"Backfilled 11:00 cancellation for Dr. Achieng from waitlist (2 min)"},
+  {t:"09:31", tag:"CRISIS", alert:true, x:"Crisis language in check-in → routed to on-call clinician, acknowledged in 90s"},
+  {t:"10:05", tag:"Claims", x:"Denial appeal drafted for 7 claims (payer: NHIF-Plus) — awaiting review"},
+  {t:"10:48", tag:"Scribe", x:"6 session notes drafted for review · avg clinician edit time 2.1 min"},
+  {t:"11:20", tag:"Evidence", x:"Weekly PHQ-9 round complete — 84% response rate"},
+  {t:"12:02", tag:"Workforce", x:"Burnout early-warning: 2 clinicians >9 hrs after-hours charting this week"}
+];
+
+const phq = [{w:"In",v:16.2},{w:"W2",v:14.8},{w:"W4",v:12.9},{w:"W6",v:11.1},{w:"W8",v:9.4},{w:"W10",v:8.0},{w:"W12",v:7.1}];
+
+/* ---------- render ---------- */
+const pm = document.getElementById('problemMap');
+problems.forEach((p,idx)=>{
+  const row = document.createElement('div');
+  row.className = 'problem-row';
+  row.innerHTML = `
+    <button class="problem-head" aria-expanded="false">
+      <span class="problem-num">${String(idx+1).padStart(2,'0')}</span>
+      <span class="problem-title">${p.t}</span>
+      <span class="problem-agent-chip">${p.a}</span>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
+    <div class="problem-body"><p>${p.b}</p></div>`;
+  row.querySelector('.problem-head').addEventListener('click',()=>{
+    const open = row.classList.toggle('open');
+    row.querySelector('.problem-head').setAttribute('aria-expanded', open);
+  });
+  pm.appendChild(row);
+});
+
+const ag = document.getElementById('agentGrid');
+agents.forEach(a=>{
+  const c = document.createElement('div');
+  c.className='agent-card';
+  c.innerHTML = `
+    <div class="agent-top">
+      <div class="agent-icon" aria-hidden="true">${a.i}</div>
+      <div><h3>${a.n}</h3><div class="role">${a.r}</div></div>
+    </div>
+    <p>${a.p}</p>
+    <div class="agent-guard">Guardrail: ${a.g}</div>`;
+  ag.appendChild(c);
+});
+
+const fd = document.getElementById('feed');
+feed.forEach(f=>{
+  const d=document.createElement('div');
+  d.className='feed-item';
+  d.innerHTML=`<span class="feed-time">${f.t}</span><span class="feed-tag${f.alert?' alert':''}">${f.tag}</span><span>${f.x}</span>`;
+  fd.appendChild(d);
+});
+
+const bars=document.getElementById('bars');
+phq.forEach(b=>{
+  const el=document.createElement('div');
+  el.className='bar';
+  el.innerHTML=`<i style="height:${(b.v/18)*100}%" title="PHQ-9 ${b.v}"></i><span>${b.w}</span>`;
+  bars.appendChild(el);
+});
+
+/* ---------- nav ---------- */
+function goView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelector(`.tab[data-view="${name}"]`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>goView(t.dataset.view)));
+
+/* ---------- gauges ---------- */
+requestAnimationFrame(()=>{ setTimeout(()=>{
+  document.querySelectorAll('.gauge-fill').forEach(g=>g.style.width=g.dataset.w);
+},150)});
+
+/* ---------- paywall ---------- */
+const pw=document.getElementById('paywall');
+function openPaywall(plan,price){
+  document.getElementById('planLine').textContent=`Plan: ${plan} — ${price}. 30 days free, cancel anytime.`;
+  pw.classList.add('show');
+}
+function closePaywall(){pw.classList.remove('show')}
+function fakeSubscribe(){
+  closePaywall();
+  alert('Demo: subscription simulated. In production this would redirect to a hosted Stripe Checkout page — the app never handles raw card data.');
+}
+pw.addEventListener('click',e=>{if(e.target===pw)closePaywall()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePaywall()});
+/* ---------- crisis modal ---------- */
+const cr=document.getElementById('crisis');
+function openCrisis(){cr.classList.add('show')}
+function closeCrisis(){cr.classList.remove('show')}
+cr.addEventListener('click',e=>{if(e.target===cr)closeCrisis()});
+
+/* ---------- check-in wizard (demo) ---------- */
+const wizQ = [
+  {q:"What brings you here today?", opts:[
+    "I've been feeling low or anxious lately",
+    "Something specific happened and I'm struggling",
+    "I want to support someone else",
+    "Just exploring — I'm okay right now"
+  ]},
+  {q:"How would you like to start?", opts:[
+    "Tools I can use on my own",
+    "A group of people who get it",
+    "One-on-one with a professional",
+    "Honestly, not sure — help me decide"
+  ]},
+  {q:"What fits your life best?", opts:[
+    "Messaging — I open up better in writing",
+    "Video or phone sessions",
+    "In person, near me",
+    "Whatever has the shortest wait"
+  ]}
+];
+let wizStep = 0, wizAnswers = [];
+const wizCard = document.getElementById('wizardCard');
+
+function renderWizard(){
+  if(wizStep < wizQ.length){
+    const q = wizQ[wizStep];
+    wizCard.innerHTML = `
+      <div class="wizard-progress">Step ${wizStep+1} of ${wizQ.length} · about 90 seconds total</div>
+      <div class="wizard-q">${q.q}</div>
+      <div class="wizard-opts">
+        ${q.opts.map((o,i)=>`<button class="wizard-opt" data-i="${i}">${o}</button>`).join('')}
+      </div>`;
+    wizCard.querySelectorAll('.wizard-opt').forEach(b=>{
+      b.addEventListener('click',()=>{ wizAnswers.push(+b.dataset.i); wizStep++; renderWizard(); });
+    });
+  } else {
+    const pref = wizAnswers[1];
+    const matches = ["a starter toolkit of guided self-care exercises","a facilitated group support circle","a one-on-one session with a matched clinician","a short call with a care guide to find your fit"];
+    wizCard.innerHTML = `
+      <div class="wizard-result">
+        <h3>Here's where we'd start together.</h3>
+        <div class="match-chip">Suggested first step: ${matches[pref]}</div>
+        <p>In the real product, the Triage agent would now confirm availability and book this within days — and a human care guide reviews every match before it's final.</p>
+        <div class="wizard-note">Safety by design: if any answer in a real check-in signals crisis, it skips this entire flow and reaches an on-call human in minutes. And if you need support today, use the "Get help now" button above.</div>
+        <p style="margin-top:18px"><button class="btn btn-ghost" onclick="resetWizard()">Try again</button></p>
+      </div>`;
+  }
+}
+function resetWizard(){wizStep=0;wizAnswers=[];renderWizard()}
+renderWizard();
+</script>
+</body>
+</html>
